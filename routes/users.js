@@ -49,4 +49,47 @@ router.post('/register', function(req, res, next) {
   })
 });
 
+router.post('/login', async (req, res) => {
+  // check if username and password
+  if (!req.body.username || !req.body.password) {
+    res.status(400).json({
+      error: 'Please include username and password.'
+    })
+    return
+  }
+  // find user by username
+  // its going to stop at this line and wait for the promise to finish
+  // then put the result in the variable (const user =)
+  const user = await db.User.findOne({
+    where: {
+      username: req.body.username
+    }
+  })
+
+  if (!user) {
+    res.status(400).json({
+      error: 'could not find user with that username.'
+    })
+    // if there is no user, stop at this point
+    return
+  }
+  // check password
+  // compare (comparing data (req.body.password) to the user.password from above on line 63)
+  const success = await bcrypt.compare(req.body.password, user.password)
+    if (!success) {
+    res.status(401).json({
+      error: 'incorrect password'
+    })
+    return
+  }
+  // login
+  // how we tell Express that the user has logged in
+    req.session.user = user
+  // respond with success or error
+  res.json({
+    success: 'successfully logged in.'
+  })
+})
+
+
 module.exports = router;
