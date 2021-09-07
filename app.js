@@ -15,6 +15,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+// edited to /api/v1 bc we;re using React as front end it's an API route
+app.use('/api/v1/users', usersRouter);
 
 module.exports = app;
